@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#7a4a1e" />
+  <title>中国象棋</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>中国象棋</h1>
+    <div id="status" class="status">轮到 红方</div>
+    <div id="thinking" class="thinking">电脑思考中…</div>
+  </header>
+
+  <main class="layout">
+    <section class="board-wrap">
+      <canvas id="board"></canvas>
+    </section>
+
+    <aside class="panel">
+      <div class="controls">
+        <button id="btnNew" class="btn primary">新局</button>
+        <button id="btnUndo" class="btn">悔棋</button>
+      </div>
+
+      <div class="options">
+        <label>模式
+          <select id="modeSel">
+            <option value="ai">人机对战</option>
+            <option value="two">双人对战</option>
+          </select>
+        </label>
+        <label>难度
+          <select id="diffSel">
+            <option value="easy">简单</option>
+            <option value="medium" selected>中等</option>
+            <option value="hard">困难</option>
+          </select>
+        </label>
+        <label>我方
+          <select id="sideSel">
+            <option value="r" selected>红方（先手）</option>
+            <option value="b">黑方（后手）</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="history-head">棋谱</div>
+      <div id="history" class="history"></div>
+    </aside>
+  </main>
+
+  <p class="hint">点击棋子选中，再点击高亮位置落子。可“添加到主屏幕”像 App 一样使用。</p>
+
+  <script src="js/rules.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
