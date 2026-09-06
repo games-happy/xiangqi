@@ -129,10 +129,20 @@
   window.addEventListener('resize', () => {
     board.resize();
     render();
+    board.render(game.getState()); // 字号变化后首帧字体度量可能不准，补画一遍
   });
 
-  // 初始化
+  // 初始化 — 首帧连画两遍：Chromium 首次测量 CJK 系统字体时
+  // actualBoundingBox 偏差较大（首个绘制的字形会错位），
+  // 第二遍在度量缓存生效后绘制即为精确居中
   board.resize();
   render();
+  board.render(game.getState());
+
+  // 字体异步解析完成后（如 Windows 上的 KaiTi fallback）再补一帧
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => render()).catch(() => {});
+  }
+
   maybeAiMove();
 })();

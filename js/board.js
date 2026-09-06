@@ -3,6 +3,10 @@
  * ============================================================ */
 
 class XiangqiBoard {
+  // 字体栈：macOS 直接命中 Kaiti SC（避免 Chromium 对不存在的 "KaiTi"
+  // 做异步 fallback 查找导致首帧文字错位），Windows 落到 KaiTi/SimSun
+  static FONT_STACK = '"Kaiti SC","STKaiti","KaiTi","SimSun",serif';
+
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
@@ -104,7 +108,7 @@ class XiangqiBoard {
 
     // 河界文字
     ctx.fillStyle = 'rgba(91,58,26,0.55)';
-    ctx.font = `${Math.floor(cs * 0.55)}px "KaiTi","STKaiti",serif`;
+    ctx.font = `${Math.floor(cs * 0.55)}px ${XiangqiBoard.FONT_STACK}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('楚 河', ox + 1.8 * cs, oy + 4.5 * cs);
@@ -234,8 +238,12 @@ class XiangqiBoard {
         // 文字 — 按字形实际包围盒几何居中（不依赖 middle 基线语义）
         const text = XQ.PIECE_DISPLAY[p.color][p.type];
         ctx.fillStyle = p.color === 'r' ? '#b71c1c' : '#1a1a1a';
-        ctx.font = `bold ${Math.floor(cs * 0.5)}px "KaiTi","STKaiti","SimSun",serif`;
+        ctx.font = `bold ${Math.floor(cs * 0.5)}px ${XiangqiBoard.FONT_STACK}`;
         ctx.textAlign = 'center';
+        // 注意：actualBoundingBox 相对“当前 textBaseline”度量。
+        // 必须在 measureText 之前设为 alphabetic，否则会继承 drawGrid
+        // 河界文字遗留的 middle 基线，导致第一个绘制的棋子文字错位
+        ctx.textBaseline = 'alphabetic';
         const tm = ctx.measureText(text);
         const box = {
           up: tm.actualBoundingBoxAscent,
