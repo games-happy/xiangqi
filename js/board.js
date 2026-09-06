@@ -231,16 +231,29 @@ class XiangqiBoard {
         ctx.arc(x, y, radius * 0.82, 0, Math.PI * 2);
         ctx.stroke();
 
-        // 文字 — 按字形实际包围盒精确居中
+        // 文字 — 按字形实际包围盒几何居中（不依赖 middle 基线语义）
         const text = XQ.PIECE_DISPLAY[p.color][p.type];
         ctx.fillStyle = p.color === 'r' ? '#b71c1c' : '#1a1a1a';
         ctx.font = `bold ${Math.floor(cs * 0.5)}px "KaiTi","STKaiti","SimSun",serif`;
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
         const tm = ctx.measureText(text);
-        const ascent = tm.actualBoundingBoxAscent ?? cs * 0.22;
-        const descent = tm.actualBoundingBoxDescent ?? cs * 0.22;
-        ctx.fillText(text, x, y + (descent - ascent) / 2);
+        const box = {
+          up: tm.actualBoundingBoxAscent,
+          down: tm.actualBoundingBoxDescent,
+          left: tm.actualBoundingBoxLeft,
+          right: tm.actualBoundingBoxRight,
+        };
+        if (typeof box.up === 'number' && typeof box.down === 'number') {
+          // alphabetic 基线：字形上边界 = y基线 - up，下边界 = y基线 + down
+          // 令二者关于圆心对称 => 基线 y' = y + (up - down) / 2
+          const l = typeof box.left === 'number' ? box.left : 0;
+          const r = typeof box.right === 'number' ? box.right : 0;
+          ctx.textBaseline = 'alphabetic';
+          ctx.fillText(text, x - (r - l) / 2, y + (box.up - box.down) / 2);
+        } else {
+          ctx.textBaseline = 'middle';
+          ctx.fillText(text, x, y);
+        }
       }
     }
   }
