@@ -231,12 +231,16 @@ class XiangqiBoard {
         ctx.arc(x, y, radius * 0.82, 0, Math.PI * 2);
         ctx.stroke();
 
-        // 文字
+        // 文字 — 按字形实际包围盒精确居中
+        const text = XQ.PIECE_DISPLAY[p.color][p.type];
         ctx.fillStyle = p.color === 'r' ? '#b71c1c' : '#1a1a1a';
         ctx.font = `bold ${Math.floor(cs * 0.5)}px "KaiTi","STKaiti","SimSun",serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(XQ.PIECE_DISPLAY[p.color][p.type], x, y + cs * 0.02);
+        const tm = ctx.measureText(text);
+        const ascent = tm.actualBoundingBoxAscent ?? cs * 0.22;
+        const descent = tm.actualBoundingBoxDescent ?? cs * 0.22;
+        ctx.fillText(text, x, y + (descent - ascent) / 2);
       }
     }
   }
