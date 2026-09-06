@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Xiangqi" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#6b4318</item>
+        <item name="android:navigationBarColor">#2b2118</item>
+        <item name="android:colorBackground">#2b2118</item>
+    </style>
+</resources>

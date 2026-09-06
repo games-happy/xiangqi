@@ -1,0 +1,13 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# 由 scripts/sync-android.sh 从 web 端拷贝生成，不入库
+/app/src/main/assets/www/
